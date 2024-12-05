@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { TaskProvider, useTasks } from "./TaskContext";
+import TaskList from "./TaskList";
+import AddTask from "./AddTask";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState(""); 
+  const { tasks, addTask } = useTasks(); 
 
-  const [newTask, setNewTask] = useState("");
-
-  const addTask = () => {
+  const handleAddTask = () => {
     if (newTask.trim()) {
-      setTasks([...tasks, newTask]);
-      setNewTask("");
+      addTask(newTask);
+      setNewTask(""); 
     }
   };
 
@@ -16,23 +18,19 @@ function App() {
     <div className="App">
       <h1>Мой список задач</h1>
       {}
-      <input
-        type="text"
-        value={newTask}
-        onChange={(e) => setNewTask(e.target.value)} 
-        placeholder="Введите задачу"
-      />
+      <AddTask newTask={newTask} setNewTask={setNewTask} addTask={handleAddTask} />
       {}
-      <button onClick={addTask}>Добавить задачу</button>
-
-      {}
-      <ul>
-        {tasks.map((task, index) => (
-          <li key={index}>{task}</li>
-        ))}
-      </ul>
+      <TaskList tasks={tasks} />
     </div>
   );
 }
 
-export default App;
+function AppWrapper() {
+  return (
+    <TaskProvider>
+      <App />
+    </TaskProvider>
+  );
+}
+
+export default AppWrapper;
